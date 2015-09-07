@@ -1,0 +1,4 @@
+services:
+    snilius.sl.client:
+        class: Snilius\Bundle\SLBundle\Client\Client
+        arguments: [ "%snilius.sl.sl_realtidsinformation_3%", "%snilius.sl.sl_reseplanerare_2%", "%snilius.sl.sl_platsuppslag%" ]
