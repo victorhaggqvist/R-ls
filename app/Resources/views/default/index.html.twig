@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  <div class="container">
+
+    <h1 class="text-center">Räls</h1>
+    <div class="row">
+      <div class="col-md-7 col-md-offset-3">
+        <form action="">
+          <div class="form-group">
+            <label for="from">Från</label>
+            <input type="text" class="form-control input-lg typeahead" id="from">
+          </div>
+          <div class="form-group">
+            <label for="to">Till</label>
+            <input type="text" class="form-control input-lg typeahead" id="to">
+          </div>
+
+          <label class="radio-inline">
+            <input type="radio" name="timeSet" id="avg" value="avg" checked> Avgår
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="timeSet" id="ank" value="ank"> Ankommer
+          </label>
+
+          <div class="row">
+            <div class="col-md-7">
+              <select class="form-control">
+                <option>I dag</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div>
+            <div class="col-md-5 form-inline">
+              <label class="pull-right">
+                Klockan:
+                <input type="time" value="{{ date|date('H:i') }}" class="form-control">
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg btn-block">Sök</button>
+        </form>
+      </div>
+    </div>
+  {#{{ form_start(form, { 'style': 'horizontal', 'label_col': 6, 'widget_col': 6 }) }}#}
+  {#{{ form_widget(form) }}#}
+  {#{{ form_end(form) }}#}
+  </div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+  var makeComplete = function (query, syncResults, asyncResults) {
+    console.log(query);
+
+    var head = new Headers();
+    head.append('x-token', '{{ csrf_token('api_place') }}');
+
+    fetch('/api/place?query=' + query, {
+      headers: head,
+      credentials: 'include'
+    })
+        .then(function(resp) {
+          return resp.json()
+        })
+        .then(function(resp) {
+          var foo = resp.map(function (r) {
+            return r.Name;
+          });
+          asyncResults(foo);
+        });
+  };
+  $('.typeahead').typeahead({
+        minLength: 2,
+        highlight: false,
+        display: 'Name'
+      },
+      {
+        name: 'my-dataset',
+        source: makeComplete
+      });
+</script>
+{% endblock %}
+
+{% block stylesheets %}
+  <style type="text/css">
+    .twitter-typeahead {
+      width: 100%;
+    }
+    .tt-menu {
+      width: 100%;
+      background-color: #cccccc;
+    }
+    .tt-suggestion {
+      padding: 5px;
+    }
+
+    .tt-cursor {
+      background-color: #a29aa0;
+      color: #fff;
+    }
+    .tt-highlight {
+      font-weight: 400;
+    }
+  </style>
+
+{% endblock %}
