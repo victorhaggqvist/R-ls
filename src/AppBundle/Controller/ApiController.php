@@ -21,18 +21,61 @@ class ApiController extends Controller {
      * @Route("/api/place", name="api_place")
      */
     public function indexAction(Request $request) {
-        $token = $request->headers->get('x-token');
-        $csrf_token = new CsrfToken('api_place', $token);
-
+        $cache = $this->get('sonata.cache.memcached');
+        $slClient = $this->get('snilius.sl.client');
         $log = $this->get('logger');
-        $log->info(var_export($this->get('security.csrf.token_manager')->isTokenValid($csrf_token), true));
-//        if ($this->get('security.csrf.token_manager')->isTokenValid($csrf_token)) {
-            $slClient = $this->get('snilius.sl.client');
-            return new JsonResponse($slClient->slPlatsuppslag($request->query->getAlnum('query', '')));
+        $query = $request->query->getAlnum('query', '');
+        $has = $cache->has(['id' => $query]);
+//        var_dump($has);
+        if ($has) {
+            $hit = $cache->get(['id' => $query]);
+            $log->info('using cache');
+            return new JsonResponse($hit->getData());
+        } else {
+            $log->info('new query');
+            $places = $slClient->slPlatsuppslag($request->query->getAlnum('query', ''), [
+                'stationsonly' => 'true'
+            ]);
+            $cache->set(['id' => $query], $places);
+
+            return new JsonResponse($places);
+        }
+
+////        $token = $request->headers->get('x-token');
+////        $csrf_token = new CsrfToken('api_place', $token);
+////
+////        $log->info(var_export($this->get('security.csrf.token_manager')->isTokenValid($csrf_token), true));
+////        if ($this->get('security.csrf.token_manager')->isTokenValid($csrf_token)) {
+//            $slClient = $this->get('snilius.sl.client');
+//            return new JsonResponse(
+//                $slClient->slPlatsuppslag($request->query->getAlnum('query', ''), [
+//                'stationsonly' => 'false'
+//            ]));
 //        } else {
 //            return new Response('', 403);
 //        }
 
+    }
+
+    /**
+     * @Route("/api/trip", name="api_trip")
+     */
+    public function tripAction(Request $request) {
+        $fromSite = $request->query->getInt('from');
+        $toSite = $request->query->getInt('to');
+
+        $arrival = $request->query->getInt('arrival', 0);
+        $date = $request->query->getAlnum('date', date('Y-m-d'));
+        $time = $request->query->getAlnum('time', date('H:i'));
+
+        $slClient = $this->get('snilius.sl.client');
+        $trips = $slClient->slReseplanerare2Trip($fromSite, $toSite, array(
+            'date' => $date,
+            'time' => $time,
+            'searchForArrival' => $arrival
+        ));
+
+        return new JsonResponse($trips);
     }
 
 }

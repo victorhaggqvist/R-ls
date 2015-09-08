@@ -104,3 +104,10 @@ snilius_sl:
     sl_realtidsinformation_3: ea0be35a0e7b45e1af5a3a2496b23724
     sl_reseplanerare_2: f8175cf38be84cfc91c5321ef5b90f05
     sl_platsuppslag: dcffae2ff7874303a11ce6a7a82e8dbe
+
+sonata_cache:
+    caches:
+       memcached:
+           prefix: test     # prefix to ensure there is no clash between instances
+           servers:
+               - {host: 127.0.0.1, port: 11211, weight: 0}

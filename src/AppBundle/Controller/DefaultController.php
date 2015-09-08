@@ -12,6 +12,16 @@ class DefaultController extends Controller
      * @Route("/", name="homepage")
      */
     public function indexAction() {
+        $dates = array();
+        for ($i = 1; $i < 7; $i++) {
+            $time = strtotime('+'.$i.' day');
+            $dates[] = array(
+                'time' => date('Y-m-d', $time),
+                'display' => date('l j F', $time)
+            );
+        }
+        $dates[0]['display'] = 'i dag';
+        $dates[1]['display'] = 'i imorgon';
         $input = new RealtidInput();
         $input->date = new \DateTime();
         $input->time = new \DateTime();
@@ -51,7 +61,8 @@ class DefaultController extends Controller
 
         return $this->render('default/index.html.twig', array(
 //            'form' => $form->createView(),
-            'date' => new \DateTime()
+            'date' => new \DateTime(),
+            'dates' => $dates
         ));
     }
 }

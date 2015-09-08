@@ -11,6 +11,7 @@ namespace Snilius\Bundle\SLBundle\Client;
 class Client {
 
     private $SlPlatsuppslagURL = 'https://api.sl.se/api2/typeahead.json';
+    private $SlReseplanerare2URL = 'https://api.sl.se/api2/TravelplannerV2';
 
 
     /**
@@ -39,6 +40,25 @@ class Client {
         $resp = $request->send();
         $json = json_decode($resp->getBody(), true);
         return $json['ResponseData'];
+    }
+
+    public function slReseplanerare2Trip($originId, $destId, array $options = []) {
+        $params = [
+            'key' => $this->slReseplanerare2key,
+            'originId' => $originId,
+            'destId' => $destId
+        ];
+        $params = array_merge($params, $options);
+
+        $url = $this->SlReseplanerare2URL.'/trip.json';
+
+        $request = $this->client->createRequest('GET', $url, null, null, [
+            'query' => $params
+        ]);
+
+        $resp = $request->send();
+        $json = json_decode($resp->getBody(), true);
+        return $json;
     }
 
 }

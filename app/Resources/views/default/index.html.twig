@@ -3,13 +3,13 @@
 {% block body %}
   <div class="container">
 
-    <h1 class="text-center">Räls</h1>
-    <div class="row">
-      <div class="col-md-7 col-md-offset-3">
-        <form action="">
+    <h1>Rels</h1>
+    <div class="row" id="root">
+      <div class="col-md-6 col-md-offset-3" id="box">
+        <form action="" id="rootSearch">
           <div class="form-group">
             <label for="from">Från</label>
-            <input type="text" class="form-control input-lg typeahead" id="from">
+            <input type="text" class="form-control input-lg typeahead" id="from" autofocus>
           </div>
           <div class="form-group">
             <label for="to">Till</label>
@@ -25,18 +25,16 @@
 
           <div class="row">
             <div class="col-md-7">
-              <select class="form-control">
-                <option>I dag</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
+              <select class="form-control" id="day">
+                {% for d in dates %}
+                  <option value="{{ d.time }}">{{ d.display }}</option>
+                {% endfor %}
               </select>
             </div>
             <div class="col-md-5 form-inline">
               <label class="pull-right">
                 Klockan:
-                <input type="time" value="{{ date|date('H:i') }}" class="form-control">
+                <input type="time" value="{{ date|date('H:i') }}" class="form-control" id="time">
               </label>
             </div>
           </div>
@@ -64,25 +62,37 @@
       headers: head,
       credentials: 'include'
     })
-        .then(function(resp) {
-          return resp.json()
-        })
-        .then(function(resp) {
-          var foo = resp.map(function (r) {
-            return r.Name;
-          });
-          asyncResults(foo);
-        });
+    .then(function(resp) {
+      return resp.json()
+    })
+    .then(function(resp) {
+      asyncResults(resp);
+    });
   };
-  $('.typeahead').typeahead({
+  var from = $('.typeahead');
+  from.typeahead({
         minLength: 2,
-        highlight: false,
-        display: 'Name'
+        highlight: false
       },
       {
-        name: 'my-dataset',
-        source: makeComplete
+        source: makeComplete,
+        templates: {
+          suggestion: function(data){
+            return '<div>'+data.Name+'</div>';
+          }
+        },
+        display: 'Name'
       });
+  from.on('typeahead:select', function (e, data) {
+    console.log(e);
+    console.log(data);
+    if (e.target.id === 'from') {
+      sites.from = data;
+    } else if (e.target.id === 'to') {
+      sites.to = data;
+    }
+  });
+
 </script>
 {% endblock %}
 

@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
             new Snilius\Bundle\SLBundle\SniliusSLBundle(),
+            new Sonata\CacheBundle\SonataCacheBundle(),
             new AppBundle\AppBundle(),
         );
 
