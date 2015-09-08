@@ -3,6 +3,10 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var webpack = require('webpack-stream');
 var eslint = require('gulp-eslint');
+var spritesmith = require('gulp.spritesmith');
+var csso = require('gulp-csso');
+var merge = require('merge-stream');
+var imagemin = require('gulp-imagemin');
 
 gulp.task('sass', function () {
     return gulp.src('style/*.scss')
@@ -54,6 +58,27 @@ gulp.task('eslint', function() {
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failOnError());
+});
+
+gulp.task('sprite', function () {
+    // Generate our spritesheet
+    var spriteData = gulp.src('sprites/*.png').pipe(spritesmith({
+        imgName: 'sprite.png',
+        cssName: 'sprite.css'
+    }));
+
+    // Pipe image stream through image optimizer and onto disk
+    var imgStream = spriteData.img
+        .pipe(imagemin())
+        .pipe(gulp.dest('./web/i'));
+
+    // Pipe CSS stream through CSS optimizer and onto disk
+    var cssStream = spriteData.css
+        .pipe(csso())
+        .pipe(gulp.dest('./web/i'));
+
+    // Return a merged stream to handle both `end` events
+    return merge(imgStream, cssStream);
 });
 
 
