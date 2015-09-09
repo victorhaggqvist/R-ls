@@ -109,16 +109,19 @@ rootSearch.onsubmit = function (event) {
                             leg: leg
                         })
                     });
-                } else {
-                    legsView += Mustache.render(legViewTemplate, leg);
-                    legsViewShort += Mustache.render(legViewShortTemplate, {
-                        icon: typeIcon(leg.type),
-                        leg: leg
-                    })
-                }
 
-                var from = legs[0].Origin;
-                var to = legs[legs.length-1].Destination;
+                    var from = legs[0].Origin;
+                    var to = legs[legs.length-1].Destination;
+                } else {
+                    legsView += Mustache.render(legViewTemplate, legs);
+                    legsViewShort += Mustache.render(legViewShortTemplate, {
+                        icon: typeIcon(legs.type),
+                        leg: legs
+                    })
+
+                    var from = legs.Origin;
+                    var to = legs.Destination;
+                }
 
                 var now  = from.date + " "+ from.time;
                 var then = to.date + " "+ to.time;
