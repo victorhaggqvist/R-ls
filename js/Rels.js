@@ -149,8 +149,7 @@ rootSearch.onsubmit = function (event) {
                 listItem.appendChild(listItemDetail);
                 listItemDetail.appendChild(listItemButtons);
                 listItem.onclick = function(e) {
-                    console.log(e);
-                    if (listItemDetail.style.display === 'none') {
+                    if (listItemDetail.style.display !== 'block') {
                         listItemDetail.style.display = 'block';
                     } else {
                         listItemDetail.style.display = 'none';
