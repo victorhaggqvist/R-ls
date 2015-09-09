@@ -149,8 +149,8 @@
 
 .short-leg {
   display: inline-block;
-  background-color: #6f6f6f;
-  color: #fff;
+  //background-color: #6f6f6f;
+  //color: #fff;
   font-size: 22px;
   padding: 0 4px;
 
@@ -161,7 +161,7 @@
   &:not(:last-child) {
     &:after {
       margin-left: 5px;
-      content: '\00BB';
+      content: '>';
     }
   }
 }
