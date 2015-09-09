@@ -16,13 +16,35 @@ var encodeData = function(data) {
     return urlEncodedDataPairs.join('&').replace(/%20/g, '+');
 };
 
-var typeIcon = function (type) {
-  return {
-      'TRAIN': 'TRN',
-      'BUS': 'BUS_red',
-      'WALK': 'Walk',
-      'METRO': 'MET_blue'
-  }[type];
+var typeIcon = function (leg) {
+    var bbus = /blåbuss/;
+    var bus = /buss/;
+
+    var tubg = /tunnelbanans gröna/;
+    var tubb = /tunnelbanans blå/;
+    var tubr = /tunnelbanans röda/;
+
+    if (bbus.test(leg.name)) {
+        return 'BUS_blue';
+    } else if (bus.test(leg.name)) {
+        return 'BUS_red';
+    } else if (tubr.test(leg.name)) {
+        return 'MET_red';
+    } else if (tubb.test(leg.name)) {
+        return 'MET_blue';
+    } else if (tubg.test(leg.name)) {
+        return 'MET_green';
+    }
+
+    else {
+        return {
+            'TRAIN': 'TRN',
+            'BUS': 'BUS_red',
+            'WALK': 'Walk',
+            'METRO': 'MET',
+            'TRAM': 'TRL'
+        }[leg.type];
+    }
 };
 
 var displayMap = function () {
@@ -96,16 +118,16 @@ rootSearch.onsubmit = function (event) {
                 var legsView = '';
                 var legsViewShort = '';
 
-                var legViewTemplate = "<div><div>- {{Origin.time}} {{Origin.name}}</div> <div>{{name}} {{dir}}</div> <div>- {{Destination.time}} {{Destination.name}}</div></div><hr>";
+                var legViewTemplate = "<div><div>- {{leg.Origin.time}} {{leg.Origin.name}}</div> <div><i class='icon icon-{{icon}}'></i> {{leg.name}} {{leg.dir}}</div> <div>- {{leg.Destination.time}} {{leg.Destination.name}}</div></div><hr>";
                 var legViewShortTemplate = "<div class='short-leg'><i class='icon icon-{{icon}}'></i>{{leg.line}}</div>";
 
                 if (Array.isArray(legs)) {
                     console.log(legs);
                     legs.forEach((leg) => {
                         console.log(leg);
-                        legsView += Mustache.render(legViewTemplate, leg);
+                        legsView += Mustache.render(legViewTemplate, {leg:leg, icon: typeIcon(leg)});
                         legsViewShort += Mustache.render(legViewShortTemplate, {
-                            icon: typeIcon(leg.type),
+                            icon: typeIcon(leg),
                             leg: leg
                         })
                     });
@@ -113,9 +135,9 @@ rootSearch.onsubmit = function (event) {
                     var from = legs[0].Origin;
                     var to = legs[legs.length-1].Destination;
                 } else {
-                    legsView += Mustache.render(legViewTemplate, legs);
+                    legsView += Mustache.render(legViewTemplate, {leg:legs, icon: typeIcon(leg)});
                     legsViewShort += Mustache.render(legViewShortTemplate, {
-                        icon: typeIcon(legs.type),
+                        icon: typeIcon(legs),
                         leg: legs
                     })
 
