@@ -3,6 +3,7 @@
  */
 
 import {Search} from './Search.js';
+var objectAssign = require('object-assign');
 var Mustache = require('mustache');
 
 
@@ -61,6 +62,9 @@ var rootSearch = document.querySelector('#rootSearch');
 var root = document.querySelector('#root');
 var spinner = document.createElement('div');
 var resultView = null;
+//var resultListContainer = document.createElement('div');
+var currentForm = null;
+var prevDate = null, nextDate = null;
 spinner.innerHTML = '<div class="spinner"><div class="cube1"></div><div class="cube2"></div></div><div class="load-text">Väntar på SL..</div>';
 
 
@@ -68,6 +72,59 @@ spinner.innerHTML = '<div class="spinner"><div class="cube1"></div><div class="c
 var day = document.querySelector('#day');
 var radios = document.getElementsByName('timeSet');
 var time = document.querySelector('#time');
+
+var prevButton = document.createElement('button');
+prevButton.innerHTML = 'Tidigare';
+prevButton.className = 'btn btn-default btn-block';
+var nextButton = document.createElement('button');
+nextButton.innerHTML = 'Senare';
+nextButton.className = 'btn btn-default btn-block';
+
+var prevTrips = function (e) {
+    e.preventDefault();
+
+    if (prevDate === null) {
+        prevDate = currentForm.day + " "+ currentForm.time;
+    }
+
+    console.log(prevDate);
+    var m = moment(prevDate,"YYYY-MM-DD HH:mm");
+    //console.log(m.format());
+    m.subtract(120 , 'minutes');
+    //console.log(m.format());
+    //console.log(currentForm);
+
+    prevDate = m.format('YYYY-MM-DD HH:mm');
+
+    var args = {};
+    objectAssign(args, currentForm);
+    args.day = m.format('YYYY-MM-DD');
+    args.time = m.format('HH:mm');
+    console.log(args);
+    queryTrip(args, true);
+};
+prevButton.onclick = prevTrips;
+
+var nextTrips = function (e) {
+    e.preventDefault();
+
+    if (nextDate === null) {
+        nextDate = currentForm.day + " "+ currentForm.time;
+    }
+
+    console.log(nextDate);
+    var m = moment(nextDate,"YYYY-MM-DD HH:mm");
+    m.add(120 , 'minutes');
+
+    nextDate = m.format('YYYY-MM-DD HH:mm');
+    var args = {};
+    objectAssign(args, currentForm);
+    args.day = m.format('YYYY-MM-DD');
+    args.time = m.format('HH:mm');
+    console.log(args);
+    queryTrip(args, false, true);
+};
+nextButton.onclick = nextTrips;
 
 /**
  * Init the results area, ie. put the big from over to the left and create a new box for results
@@ -108,7 +165,7 @@ var submitButtonAction = function (event) {
     if (resultView === null) {
         initSearchArea();
     }
-    
+
     resultView.innerHTML = '';
 
     var resultHead = document.createElement('h3');
@@ -116,24 +173,48 @@ var submitButtonAction = function (event) {
     resultHead.innerHTML = sites.from.Name + ' -> ' + sites.to.Name;
     resultView.appendChild(resultHead);
     resultView.appendChild(spinner);
+    //resultView.appendChild(resultListContainer);
+    //resultListContainer.innerHTML = '';
     spinner.style.display = 'block';
 
     var formInput = parseForm();
+    currentForm = formInput;
 
-    fetch('/api/trip?' + encodeData(formInput), {
+    nextDate = null;
+    prevDate = null;
+
+    queryTrip(formInput);
+};
+
+var queryTrip  = function(params, appendTop = false, appendBottom = false) {
+    fetch('/api/trip?' + encodeData(params), {
         credentials: 'include'
     }).then(res => res.json())
-    .then(res => renderResults(res));
+        .then(res => renderResults(res, appendTop, appendBottom));
 };
 
 /**
  * Render search results
  * @param resp
+ * @param appendBottom
+ * @param appendTop
  */
-var renderResults = function (resp) {
+var renderResults = function(resp, appendTop, appendBottom) {
     console.log(resp);
-    var trips = resp.TripList.Trip;
     var resultList = document.createElement('div');
+
+    if (resp.TripList.errorText !== undefined) {
+        resultList.innerHTML = '<p class="error">'+resp.TripList.errorText+'</p>';
+        resultList.className = 'alert alert-danger';
+        spinner.style.display = 'none';
+        resultView.appendChild(resultList);
+        return;
+    }
+
+    var trips = resp.TripList.Trip;
+    //if (resultList === null) {
+
+    //}
 
     trips.forEach((t) => {
         // legs may be an Array or a Object, because SL
@@ -160,7 +241,7 @@ var renderResults = function (resp) {
             from = legs[0].Origin;
             to = legs[legs.length-1].Destination;
         } else {
-            legsView += Mustache.render(legViewTemplate, {leg:legs, icon: typeIcon(leg)});
+            legsView += Mustache.render(legViewTemplate, {leg:legs, icon: typeIcon(legs)});
             legsViewShort += Mustache.render(legViewShortTemplate, {
                 icon: typeIcon(legs),
                 leg: legs
@@ -206,7 +287,16 @@ var renderResults = function (resp) {
     });
     spinner.style.display = 'none';
     console.log(resultList);
-    resultView.appendChild(resultList);
+
+    if (appendTop) {
+        prevButton.parentNode.insertBefore(resultList, prevButton.parentNode.childNodes[3]);
+    } else if (appendBottom) {
+        nextButton.parentNode.insertBefore(resultList, nextButton.parentNode.childNodes[nextButton.parentNode.childNodes.length-1]);
+    } else {
+        resultView.appendChild(prevButton);
+        resultView.appendChild(resultList);
+        resultView.appendChild(nextButton);
+    }
 };
 
 rootSearch.onsubmit = submitButtonAction;
