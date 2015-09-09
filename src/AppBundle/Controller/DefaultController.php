@@ -21,7 +21,7 @@ class DefaultController extends Controller
             );
         }
         $dates[0]['display'] = 'i dag';
-        $dates[1]['display'] = 'i imorgon';
+        $dates[1]['display'] = 'i imorgon ('.$dates[1]['display'].')';
         $input = new RealtidInput();
         $input->date = new \DateTime();
         $input->time = new \DateTime();

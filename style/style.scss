@@ -4,8 +4,10 @@
  * Licensed under MIT (https://github.com/twbs/blob/master/LICENSE)
  */
 
+
+@import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
 // Core variables and mixins
-@import "yeti/_variables";
+@import "yeti_variables";
 @import "mixins";
 
 // Reset and dependencies
@@ -56,6 +58,7 @@
 @import "responsive-utilities";
 
 @import "yeti/_bootswatch";
+
 
 // loading animation from http://tobiasahlin.com/spinkit/
 .spinner {
@@ -118,12 +121,52 @@
   background-color: #bbbbbb;
   margin-bottom: 5px;
   padding: 5px;
+  cursor: pointer;
 
   h3 {
     margin-top: 0;
+    margin-bottom: 0;
+    display: inline-block;
   }
 }
 
 .trip-detail {
   display: none;
+
+  hr {
+    margin: 0;
+  }
+}
+
+.icon {
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+.short {
+  display: inline-block;
+}
+
+.short-leg {
+  display: inline-block;
+  background-color: #6f6f6f;
+  color: #fff;
+  font-size: 22px;
+  padding: 0 4px;
+
+  i {
+    margin-right: 4px;
+  }
+
+  &:not(:last-child) {
+    &:after {
+      margin-left: 5px;
+      content: '\00BB';
+    }
+  }
+}
+
+.btn-detail {
+  display: inline-block;
+  width: 50%;
 }

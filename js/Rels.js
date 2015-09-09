@@ -16,6 +16,24 @@ var encodeData = function(data) {
     return urlEncodedDataPairs.join('&').replace(/%20/g, '+');
 };
 
+var typeIcon = function (type) {
+  return {
+      'TRAIN': 'TRN',
+      'BUS': 'BUS_red',
+      'WALK': 'Walk',
+      'METRO': 'MET_blue'
+  }[type];
+};
+
+var displayMap = function () {
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id: 'atriix.nd49o5jk',
+        accessToken: 'pk.eyJ1IjoiYXRyaWl4IiwiYSI6IjdmNmY1MmUwZjY1ZDJmM2RlNDE0OGU3NmIyZDU2YWJmIn0.7rJekXMaz4HjJRNkgHF1nw'
+    }).addTo(map);
+};
+
 window.sites = {};
 var rootSearch = document.querySelector('#rootSearch');
 var root = document.querySelector('#root');
@@ -78,36 +96,58 @@ rootSearch.onsubmit = function (event) {
                 var legsView = '';
                 var legsViewShort = '';
 
+                var legViewTemplate = "<div><div>- {{Origin.time}} {{Origin.name}}</div> <div>{{name}} {{dir}}</div> <div>- {{Destination.time}} {{Destination.name}}</div></div><hr>";
+                var legViewShortTemplate = "<div class='short-leg'><i class='icon icon-{{icon}}'></i>{{leg.line}}</div>";
+
                 if (Array.isArray(legs)) {
                     console.log(legs);
                     legs.forEach((leg) => {
                         console.log(leg);
-                        legsView += Mustache.render("<div><div>- {{Origin.time}} {{Origin.name}}</div> <div>{{name}} {{dir}}</div> <div>- {{Destination.time}} {{Destination.name}}</div></div><hr>", leg);
-                        legsViewShort += Mustache.render("{{type}} ", leg)
+                        legsView += Mustache.render(legViewTemplate, leg);
+                        legsViewShort += Mustache.render(legViewShortTemplate, {
+                            icon: typeIcon(leg.type),
+                            leg: leg
+                        })
                     });
                 } else {
-                    legsView += Mustache.render("<div><div>- {{Origin.time}} {{Origin.name}}</div> <div>{{name}} {{dir}}</div> <div>- {{Destination.time}} {{Destination.name}}</div></div><hr>", leg);
-                    legsViewShort += Mustache.render("{{type}} ", leg)
+                    legsView += Mustache.render(legViewTemplate, leg);
+                    legsViewShort += Mustache.render(legViewShortTemplate, {
+                        icon: typeIcon(leg.type),
+                        leg: leg
+                    })
                 }
 
                 var from = legs[0].Origin;
                 var to = legs[legs.length-1].Destination;
 
+                var now  = from.date + " "+ from.time;
+                var then = to.date + " "+ to.time;
+
+                var ms = moment(then,"YYYY-MM-DD HH:mm").diff(moment(now,"YYYY-MM-DD HH:mm"));
+                var d = moment.duration(ms);
+                var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+
+                console.log(s);
+
                 console.log(legsView);
                 var listItem = document.createElement('div');
+                var listItemButtons = document.createElement('div');
+                listItemButtons.innerHTML = '<button class="btn btn-default btn-detail">Resvag</button><button class="btn btn-default btn-detail">Karta</button>';
 
                 var listItemDetail = document.createElement('div');
                 listItemDetail.className = 'trip-detail';
                 listItemDetail.innerHTML = legsView;
 
                 listItem.className = 'trip';
-                listItem.innerHTML = Mustache.render("<h3>{{from.time}} -> {{to.time}} <small>{{legsShort}}</small></h3>", {
+                listItem.innerHTML = Mustache.render("<h3>{{from.time}} -> {{to.time}} ({{duration}})</h3> <div class='short'>{{{legsShort}}}</div>", {
                     legsShort: legsViewShort,
                     trip: t,
                     from: from,
-                    to: to
+                    to: to,
+                    duration: s
                 });
                 listItem.appendChild(listItemDetail);
+                listItemDetail.appendChild(listItemButtons);
                 listItem.onclick = function(e) {
                     console.log(e);
                     if (listItemDetail.style.display === 'none') {

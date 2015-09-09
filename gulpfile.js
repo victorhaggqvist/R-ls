@@ -28,8 +28,7 @@ gulp.task('pack', function(callback) {
             },
             module: {
                 loaders: [
-                    { test: /\.js$/, loader: 'babel' },
-                    { test: /\.js$/, loader: 'msx' }
+                    { test: /\.js$/, loader: 'babel' }
                 ]
             }
         }))
@@ -45,8 +44,7 @@ gulp.task('pack:watch', function(callback) {
             },
             module: {
                 loaders: [
-                    { test: /\.js$/, loader: 'babel' },
-                    { test: /\.js$/, loader: 'msx' }
+                    { test: /\.js$/, loader: 'babel' }
                 ]
             }
         }))
@@ -64,6 +62,7 @@ gulp.task('sprite', function () {
     // Generate our spritesheet
     var spriteData = gulp.src('sprites/*.png').pipe(spritesmith({
         imgName: 'sprite.png',
+        //imgPath: 'i/sprite.png',
         cssName: 'sprite.css'
     }));
 
@@ -94,6 +93,10 @@ gulp.task('script', function () {
     gulp.src(['./bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js']).pipe(gulp.dest('./web/js'));
     gulp.src(['./bower_components/typeahead.js/dist/typeahead.bundle.min.js']).pipe(gulp.dest('./web/js'));
     gulp.src(['./node_modules/mithril/mithril.min.js']).pipe(gulp.dest('./web/js'));
+    gulp.src(['./bower_components/moment/min/moment-with-locales.min.js']).pipe(gulp.dest('./web/js'));
+
+    gulp.src(['./bower_components/leaflet/dist/leaflet.js']).pipe(gulp.dest('./web/leaflet'));
+    gulp.src(['./bower_components/leaflet/dist/leaflet.css']).pipe(gulp.dest('./web/leaflet'));
 });
 
 gulp.task('build', ['fonts', 'style', 'jquery', 'script']);
