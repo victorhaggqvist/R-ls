@@ -13,7 +13,7 @@ class DefaultController extends Controller
      */
     public function indexAction() {
         $dates = array();
-        for ($i = 1; $i < 7; $i++) {
+        for ($i = 1; $i < 14; $i++) {
             $time = strtotime('+'.$i.' day');
             $dates[] = array(
                 'time' => date('Y-m-d', $time),
