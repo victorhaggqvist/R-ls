@@ -61,4 +61,21 @@ class Client {
         return $json;
     }
 
+    public function slReseplanerare2Geometry($ref) {
+        $url = $this->SlReseplanerare2URL.'/geometry.json';
+
+        $params = [
+            'key' => $this->slReseplanerare2key,
+            'ref' => $ref
+        ];
+
+        $request = $this->client->createRequest('GET', $url, null, null, [
+            'query' => $params
+        ]);
+
+        $resp = $request->send();
+        $json = json_decode($resp->getBody(), true);
+        return $json;
+    }
+
 }
