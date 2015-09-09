@@ -52,46 +52,7 @@
 
 {% block javascripts %}
 <script>
-  var makeComplete = function (query, syncResults, asyncResults) {
-    console.log(query);
 
-    var head = new Headers();
-    head.append('x-token', '{{ csrf_token('api_place') }}');
-
-    fetch('/api/place?query=' + query, {
-      headers: head,
-      credentials: 'include'
-    })
-    .then(function(resp) {
-      return resp.json()
-    })
-    .then(function(resp) {
-      asyncResults(resp);
-    });
-  };
-  var from = $('.typeahead');
-  from.typeahead({
-        minLength: 2,
-        highlight: false
-      },
-      {
-        source: makeComplete,
-        templates: {
-          suggestion: function(data){
-            return '<div>'+data.Name+'</div>';
-          }
-        },
-        display: 'Name'
-      });
-  from.on('typeahead:select', function (e, data) {
-    console.log(e);
-    console.log(data);
-    if (e.target.id === 'from') {
-      sites.from = data;
-    } else if (e.target.id === 'to') {
-      sites.to = data;
-    }
-  });
 
 </script>
 {% endblock %}
