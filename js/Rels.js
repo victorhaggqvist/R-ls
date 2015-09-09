@@ -135,7 +135,7 @@ rootSearch.onsubmit = function (event) {
                 console.log(legsView);
                 var listItem = document.createElement('div');
                 var listItemButtons = document.createElement('div');
-                listItemButtons.innerHTML = '<button class="btn btn-default btn-detail">Resvag</button><button class="btn btn-default btn-detail">Karta</button>';
+                listItemButtons.innerHTML = '<button class="btn btn-default btn-detail">Resväg</button><button class="btn btn-default btn-detail">Karta</button>';
 
                 var listItemDetail = document.createElement('div');
                 listItemDetail.className = 'trip-detail';
