@@ -64,7 +64,7 @@ class ApiController extends Controller {
         $fromSite = $request->query->getInt('from');
         $toSite = $request->query->getInt('to');
 
-        $arrival = $request->query->getInt('arrival', 0);
+        $arrival = $request->query->getAlpha('arrival');
         $date = $request->query->getAlnum('date', date('Y-m-d'));
         $time = $request->query->getAlnum('time', date('H:i'));
 
@@ -72,7 +72,7 @@ class ApiController extends Controller {
         $trips = $slClient->slReseplanerare2Trip($fromSite, $toSite, array(
             'date' => $date,
             'time' => $time,
-            'searchForArrival' => $arrival
+            'searchForArrival' => $arrival == 'ank' ? 0 : 1
         ));
 
         return new JsonResponse($trips);
