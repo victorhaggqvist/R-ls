@@ -48,15 +48,6 @@ var typeIcon = function (leg) {
     }
 };
 
-var displayMap = function () {
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        maxZoom: 18,
-        id: 'atriix.nd49o5jk',
-        accessToken: 'pk.eyJ1IjoiYXRyaWl4IiwiYSI6IjdmNmY1MmUwZjY1ZDJmM2RlNDE0OGU3NmIyZDU2YWJmIn0.7rJekXMaz4HjJRNkgHF1nw'
-    }).addTo(map);
-};
-
 window.sites = {};
 var rootSearch = document.querySelector('#rootSearch');
 var root = document.querySelector('#root');
@@ -212,11 +203,9 @@ var renderResults = function(resp, appendTop, appendBottom) {
     }
 
     var trips = resp.TripList.Trip;
-    //if (resultList === null) {
-
-    //}
 
     trips.forEach((t) => {
+        console.log(t);
         // legs may be an Array or a Object, because SL
         var legs = t.LegList.Leg;
 
@@ -227,15 +216,18 @@ var renderResults = function(resp, appendTop, appendBottom) {
         var legViewShortTemplate = "<div class='short-leg'><i class='icon icon-{{icon}}'></i>{{leg.line}}</div>";
 
         var from, to;
+        var geoRefs = [];
         if (Array.isArray(legs)) {
-            console.log(legs);
+            //console.log(legs);
             legs.forEach((leg) => {
-                console.log(leg);
+                //console.log(leg);
                 legsView += Mustache.render(legViewTemplate, {leg:leg, icon: typeIcon(leg)});
                 legsViewShort += Mustache.render(legViewShortTemplate, {
                     icon: typeIcon(leg),
                     leg: leg
-                })
+                });
+
+                if (leg.type !== 'WALK') geoRefs.push(leg.GeometryRef.ref.substring(6));
             });
 
             from = legs[0].Origin;
@@ -249,6 +241,7 @@ var renderResults = function(resp, appendTop, appendBottom) {
 
             from = legs.Origin;
             to = legs.Destination;
+            if (legs.type !== 'WALK') geoRefs.push(legs.GeometryRef.ref.substring(6));
         }
 
         var now  = from.date + " "+ from.time;
@@ -259,31 +252,70 @@ var renderResults = function(resp, appendTop, appendBottom) {
         var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
 
         var listItem = document.createElement('div');
-        var listItemButtons = document.createElement('div');
-        listItemButtons.innerHTML = '<button class="btn btn-default btn-detail">Resväg</button><button class="btn btn-default btn-detail">Karta</button>';
 
+        // action buttons
+        var listItemButtons = document.createElement('div');
+        var routeButton = document.createElement('button');
+        routeButton.className = 'btn btn-default btn-detail';
+        routeButton.innerHTML = 'Resväg';
+        var mapButton = document.createElement('button');
+        mapButton.className = 'btn btn-default btn-detail';
+        mapButton.innerHTML = 'Karta';
+        listItemButtons.appendChild(routeButton);
+        listItemButtons.appendChild(mapButton);
+
+        // wrapper box
+        var listItemBox  = document.createElement('div');
+        listItemBox.style.display = 'none';
+
+        // list items
         var listItemDetail = document.createElement('div');
         listItemDetail.className = 'trip-detail';
         listItemDetail.innerHTML = legsView;
 
+        listItemBox.appendChild(listItemDetail);
+
         listItem.className = 'trip';
-        listItem.innerHTML = Mustache.render("<h3>{{from.time}} -> {{to.time}} ({{duration}})</h3> <div class='short'>{{{legsShort}}}</div>", {
+
+        var listItemHeader = document.createElement('div');
+        listItemHeader.innerHTML = Mustache.render("<h3>{{from.time}} -> {{to.time}} ({{duration}})</h3> <div class='short'>{{{legsShort}}}</div>", {
             legsShort: legsViewShort,
             trip: t,
             from: from,
             to: to,
             duration: s
         });
-        listItem.appendChild(listItemDetail);
-        listItemDetail.appendChild(listItemButtons);
-        listItem.onclick = function(e) {
-            if (listItemDetail.style.display !== 'block') {
-                listItemDetail.style.display = 'block';
+        listItem.appendChild(listItemHeader);
+        listItem.appendChild(listItemBox);
+
+        listItemHeader.onclick = function(e) {
+            if (listItemBox.style.display !== 'block') {
+                listItemBox.style.display = 'block';
             } else {
-                listItemDetail.style.display = 'none';
+                listItemBox.style.display = 'none';
             }
         };
         resultList.appendChild(listItem);
+
+        var listItemMap = document.createElement('div');
+        var mapId = 'map_'+Math.random().toString(36).substr(2, 5);
+        listItemMap.id = mapId;
+        listItemMap.className = 'trip-map';
+        //listItemMap.innerHTML = '<div id="'+mapId+'" class="trip-map"></div>';
+
+        listItemBox.appendChild(listItemMap);
+        listItemBox.appendChild(listItemButtons);
+        mapButton.onclick = function(e) {
+            listItemDetail.style.display = 'none';
+            listItemMap.style.display = 'block';
+            renderMap(mapId, geoRefs);
+        };
+
+        routeButton.onclick = function (e) {
+            listItemMap.style.display = 'none';
+            listItemDetail.style.display = 'block';
+        };
+
     });
     spinner.style.display = 'none';
     console.log(resultList);
@@ -297,6 +329,50 @@ var renderResults = function(resp, appendTop, appendBottom) {
         resultView.appendChild(resultList);
         resultView.appendChild(nextButton);
     }
+};
+
+var renderMap = function (mapId, geoRefs) {
+    console.log(geoRefs);
+    try {
+        var map = L.map(mapId).setView([59.3282702,18.065956], 13);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            maxZoom: 18,
+            id: 'atriix.nd49o5jk',
+            accessToken: 'pk.eyJ1IjoiYXRyaWl4IiwiYSI6IjdmNmY1MmUwZjY1ZDJmM2RlNDE0OGU3NmIyZDU2YWJmIn0.7rJekXMaz4HjJRNkgHF1nw'
+        }).addTo(map);
+
+        var allPoints = [];
+        geoRefs.forEach((ref) => {
+            fetch('/api/geometry?ref=' + ref)
+                .then(res => res.json())
+                .then((res) => {
+                    var points = res.Geometry.Points.Point;
+
+                    var pointList = points.map((p) => {
+                        return new L.LatLng(p.lat, p.lon);
+                    });
+                    allPoints.push(pointList);
+
+                    var polyline = new L.Polyline(pointList, {
+                        color: 'red',
+                        weight: 3,
+                        opacity: 0.5,
+                        smoothFactor: 1
+
+                    });
+                    polyline.addTo(map);
+
+                    var bounds = new L.LatLngBounds(allPoints);
+                    map.fitBounds(bounds);
+                });
+        });
+
+
+    } catch (e){
+
+    }
+
 };
 
 rootSearch.onsubmit = submitButtonAction;

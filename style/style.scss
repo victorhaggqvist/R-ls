@@ -135,7 +135,7 @@
 }
 
 .trip-detail {
-  display: none;
+  //display: none;
 
   hr {
     margin: 0;
@@ -177,4 +177,9 @@
 
 .error {
   font-size: 20px;
+}
+
+.trip-map {
+  height: 350px;
+  display: none;
 }

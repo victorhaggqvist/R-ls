@@ -78,4 +78,16 @@ class ApiController extends Controller {
         return new JsonResponse($trips);
     }
 
+    /**
+     * @Route("/api/geometry", name="api_geometry")
+     */
+    public function geometryAction(Request $request) {
+        $slClient = $this->get('snilius.sl.client');
+
+        $ref = $request->query->get('ref');
+        $geom = $slClient->slReseplanerare2Geometry($ref);
+
+        return new JsonResponse($geom);
+    }
+
 }
