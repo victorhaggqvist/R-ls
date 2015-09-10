@@ -1,0 +1,23 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2">
+        <h1>Om Räls</h1>
+        Räls är en alternativ reseplanerare för SL. Den existerar bland annat för reseplaneraren på <a href="http://sl.se/">sl.se</a> är undermålig och har allmänt kass UX sedan lanseringen av den "nya" siten. Räls är inspererad av
+        <a href="http://resl.se/">reSL</a>, vilken var utmärkt ersättare sålänge den fungerade (fungerar inte längre när detta skrivs 2015-09-10).
+
+        <h3>Räls?</h3>
+        Räls hade från början kodnamnet "Rels", som i ett anagram av "re" och "SL", men aftersom det mest såg ut som en felstaving av "räls" byttes namnet ut. Vilket också blev hyggligt passande i sammanhanget.
+
+        <h3>Under ytan</h3>
+        Räls bygger på Symfony, och pratar med SL genom api wrapper Bundle. Dock sker det mesta vyrelatarade med ett ton JavaScript. Sökhistoriken ligger i en IndexedDB och hanteras av
+        <a href="https://github.com/google/lovefield">lovefield</a>.
+
+        <h3>DET FUNKAR INTE!!</h3>
+        Detta kan sannolikt bero på att SL inte är glada för tillfället, se <a href="http://status.trafiklab.se/">status</a>. Eller så har SL ändrat i apierna och Räls inte hunnit med.
+      </div>
+    </div>
+  </div>
+{% endblock %}
