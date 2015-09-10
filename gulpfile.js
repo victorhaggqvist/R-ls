@@ -2,6 +2,7 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var webpack = require('webpack-stream');
+var wp = require('webpack');
 var eslint = require('gulp-eslint');
 var spritesmith = require('gulp.spritesmith');
 var csso = require('gulp-csso');
@@ -20,7 +21,7 @@ gulp.task('sass', function () {
         .pipe(gulp.dest('./web/css'));
 });
 
-gulp.task('pack', function(callback) {
+gulp.task('pack', function() {
     return gulp.src('./js/Rels.js')
         .pipe(webpack({
             output: {
@@ -35,7 +36,23 @@ gulp.task('pack', function(callback) {
         .pipe(gulp.dest('./web/js'));
 });
 
-gulp.task('pack:watch', function(callback) {
+gulp.task('pack:dist', function() {
+    return gulp.src('./js/Rels.js')
+        .pipe(webpack({
+            output: {
+                filename: 'Rels.min.js'
+            },
+            module: {
+                loaders: [
+                    { test: /\.js$/, loader: 'babel' }
+                ]
+            },
+            plugins: [new wp.optimize.UglifyJsPlugin()]
+        }))
+        .pipe(gulp.dest('./web/js'));
+});
+
+gulp.task('pack:watch', function() {
     return gulp.src('./js/Rels.js')
         .pipe(webpack({
             watch: true,
@@ -62,7 +79,6 @@ gulp.task('sprite', function () {
     // Generate our spritesheet
     var spriteData = gulp.src('sprites/*.png').pipe(spritesmith({
         imgName: 'sprite.png',
-        //imgPath: 'i/sprite.png',
         cssName: 'sprite.css'
     }));
 
@@ -80,26 +96,19 @@ gulp.task('sprite', function () {
     return merge(imgStream, cssStream);
 });
 
-
-gulp.task('fonts', function () {
-    return gulp.src(['./bower_components/bootstrap-sass/assets/fonts/bootstrap/*']).pipe(gulp.dest('./web/fonts'));
-});
-
-gulp.task('jquery', function () {
-    return gulp.src(['./bower_components/jquery/dist/jquery.min.js']).pipe(gulp.dest('./web/js'));
-});
-
-gulp.task('script', function () {
+gulp.task('copy', function () {
+    gulp.src(['./bower_components/bootstrap-sass/assets/fonts/bootstrap/*']).pipe(gulp.dest('./web/fonts'));
+    gulp.src(['./bower_components/jquery/dist/jquery.min.js']).pipe(gulp.dest('./web/js'));
     gulp.src(['./bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js']).pipe(gulp.dest('./web/js'));
     gulp.src(['./bower_components/typeahead.js/dist/typeahead.bundle.min.js']).pipe(gulp.dest('./web/js'));
-    gulp.src(['./node_modules/mithril/mithril.min.js']).pipe(gulp.dest('./web/js'));
     gulp.src(['./bower_components/moment/min/moment-with-locales.min.js']).pipe(gulp.dest('./web/js'));
+    gulp.src(['./node_modules/lovefield/dist/lovefield.min.js']).pipe(gulp.dest('./web/js'));
 
     gulp.src(['./bower_components/leaflet/dist/leaflet.js']).pipe(gulp.dest('./web/leaflet'));
     gulp.src(['./bower_components/leaflet/dist/leaflet.css']).pipe(gulp.dest('./web/leaflet'));
 });
 
-gulp.task('build', ['fonts', 'style', 'jquery', 'script']);
+gulp.task('build', ['copy', 'pack:dist', 'sprite', 'sass']);
 
 gulp.task('default', function () {
     gulp.start('build');
