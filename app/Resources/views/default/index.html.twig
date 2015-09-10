@@ -2,8 +2,6 @@
 
 {% block body %}
   <div class="container">
-
-    <h1>Räls</h1>
     <div class="row" id="root">
       <div class="col-md-6 col-md-offset-3" id="box">
         <form action="" id="rootSearch">
@@ -33,7 +31,6 @@
             </div>
             <div class="col-md-5 form-inline">
               <label class="pull-right">
-                Klockan:
                 <input type="time" value="{{ date|date('H:i') }}" class="form-control" id="time">
               </label>
             </div>
@@ -41,20 +38,19 @@
 
           <button type="submit" class="btn btn-primary btn-lg btn-block">Sök</button>
         </form>
+        <div id="history"></div>
       </div>
     </div>
-  {#{{ form_start(form, { 'style': 'horizontal', 'label_col': 6, 'widget_col': 6 }) }}#}
-  {#{{ form_widget(form) }}#}
-  {#{{ form_end(form) }}#}
   </div>
 
 {% endblock %}
 
 {% block javascripts %}
-<script>
-
-
-</script>
+  <script src="{{ asset('js/typeahead.bundle.min.js') }}"></script>
+  <script async src="{{ asset('leaflet/leaflet.js') }}"></script>
+  <script src="{{ asset('js/lovefield.min.js') }}"></script>
+  <script async src="{{ asset('js/moment-with-locales.min.js') }}"></script>
+  <script src="{{ asset('js/Rels.min.js') }}"></script>
 {% endblock %}
 
 {% block stylesheets %}

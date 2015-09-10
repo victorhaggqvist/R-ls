@@ -6,8 +6,57 @@ import {Search} from './Search.js';
 var objectAssign = require('object-assign');
 var Mustache = require('mustache');
 
+var DB;
+var schemaBuilder = lf.schema.create('searchHistory', 1);
+var initDB = function () {
+    schemaBuilder.createTable('History').
+        addColumn('id', lf.Type.INTEGER).
+        addColumn('from', lf.Type.OBJECT).
+        addColumn('to', lf.Type.OBJECT).
+        addColumn('useCount', lf.Type.INTEGER).
+        addPrimaryKey(['id']).
+        addIndex('idxDeadline', ['useCount'], false, lf.Order.DESC);
+};
 
-var Rels = {};
+initDB();
+schemaBuilder.connect().then(function(db) {
+    DB = db;
+    loadHistory();
+});
+
+var loadHistory = function () {
+    var h = DB.getSchema().table('History');
+    console.log(h);
+    DB.select()
+        .from(h)
+        .orderBy(h.useCount, lf.Order.DESC)
+        //.where(lf.op.and(h.from.eq(sites.from), h.to.eq(sites.to)))
+        .exec()
+        .then((rows) => {
+            var view =  document.createElement('div');
+
+            console.log(rows);
+
+            rows.forEach((r) => {
+                console.log(r);
+                var hRow = document.createElement('div');
+                hRow.innerHTML = r.from.Name + ' -> ' + r.to.Name;
+                hRow.className = 'history-row';
+                hRow.onclick = function () {
+                    _from.value = r.from.Name;
+                    _to.value = r.to.Name;
+
+                    sites.from = r.from;
+                    sites.to = r.to;
+                    submitButtonAction(null);
+                };
+                view.appendChild(hRow)
+            });
+
+            history.appendChild(view);
+        });
+};
+
 
 var encodeData = function(data) {
     var urlEncodedDataPairs = [];
@@ -52,6 +101,7 @@ window.sites = {};
 var rootSearch = document.querySelector('#rootSearch');
 var root = document.querySelector('#root');
 var spinner = document.createElement('div');
+var history = document.querySelector('#history');
 var resultView = null;
 //var resultListContainer = document.createElement('div');
 var currentForm = null;
@@ -63,6 +113,8 @@ spinner.innerHTML = '<div class="spinner"><div class="cube1"></div><div class="c
 var day = document.querySelector('#day');
 var radios = document.getElementsByName('timeSet');
 var time = document.querySelector('#time');
+var _from = document.querySelector('#from');
+var _to = document.querySelector('#to');
 
 var prevButton = document.createElement('button');
 prevButton.innerHTML = 'Tidigare';
@@ -152,7 +204,7 @@ var parseForm = function () {
  * @param event
  */
 var submitButtonAction = function (event) {
-    event.preventDefault();
+    event === null || event.preventDefault();
     if (resultView === null) {
         initSearchArea();
     }
@@ -175,6 +227,44 @@ var submitButtonAction = function (event) {
     prevDate = null;
 
     queryTrip(formInput);
+
+    var h = DB.getSchema().table('History');
+    console.log(h);
+    DB.select()
+    .from(h)
+    //.where(lf.op.and(h.from.eq(sites.from), h.to.eq(sites.to)))
+    .exec()
+    .then((rows) => {
+            var exists = null;
+
+            // working around .eq beeing undefined in the query
+            rows.forEach((r) => {
+                //console.log(r);
+               if (r.to.SiteId === sites.to.SiteId && r.from.SiteId === sites.from.SiteId) exists = r;
+            });
+
+            console.log('query result');
+            //console.log(rows);
+
+            if (exists === null) {
+                console.log('new history');
+                var row = h.createRow({
+                    'id': parseInt(sites.from.SiteId+''+sites.to.SiteId),
+                    'from': sites.from,
+                    'to': sites.to,
+                    'useCount': 1
+                });
+                DB.insertOrReplace().into(h).values([row]).exec();
+            } else {
+                console.log('update history');
+                //var r = exists;
+                exists.useCount++;
+                console.log(exists);
+                var row = h.createRow(exists);
+                console.log(row);
+                DB.insertOrReplace().into(h).values([row]).exec();
+            }
+        });
 };
 
 var queryTrip  = function(params, appendTop = false, appendBottom = false) {

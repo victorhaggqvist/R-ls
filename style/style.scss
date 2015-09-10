@@ -183,3 +183,29 @@
   height: 350px;
   display: none;
 }
+
+#history {
+  margin-top: 20px;
+}
+
+.history-row {
+  padding: 3px;
+  cursor: pointer;
+  border-bottom: 1px #ccc solid;
+
+  &:hover {
+    background-color: #bbb;
+  }
+}
+
+.navbar-text {
+  margin-top: 15px;
+}
+
+footer {
+  margin-top: 50px;
+}
+
+#time {
+  width: 130px;
+}
