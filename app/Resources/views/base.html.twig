@@ -17,7 +17,7 @@
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2">
             <div class="navbar-header">
-              <a class="navbar-brand" href="{{ path('homepage') }}">Räls</a><p class="navbar-text">En reseplanerare för SL</p>
+              <a class="navbar-brand" href="{{ path('homepage') }}">Räls</a><p class="navbar-text">{% trans %}En reseplanerare för SL{% endtrans %}</p>
             </div>
           </div>
         </div>
@@ -28,7 +28,12 @@
       <div class="container">
         <div class="row">
           <div class="col-md-8 col-md-offset-2">
-            Byggd av <a href="https://twitter.com/victorhggqvst">Victor Häggqvist</a> | <a href="{{ path('about') }}">Om Räls</a>
+            {% trans %}Byggd av{% endtrans %} <a href="https://twitter.com/victorhggqvst">Victor Häggqvist</a> | <a href="{{ path('about') }}">{% trans %}Om Räls{% endtrans %}</a> |
+            {% if app.request.locale != 'sv' %}
+              <a href="{{ path('homepage', {'_locale': 'sv'}) }}">Svenska</a>
+            {% else %}
+              <a href="{{ path('homepage', {'_locale': 'en'}) }}">English</a>
+            {% endif %}
           </div>
         </div>
       </div>

@@ -6,19 +6,19 @@
       <div class="col-md-6 col-md-offset-3" id="box">
         <form action="" id="rootSearch">
           <div class="form-group">
-            <label for="from">Från</label>
+            <label for="from">{% trans %}Från{% endtrans %}</label>
             <input type="text" class="form-control input-lg typeahead" id="from" autofocus>
           </div>
           <div class="form-group">
-            <label for="to">Till</label>
+            <label for="to">{% trans %}Till{% endtrans %}</label>
             <input type="text" class="form-control input-lg typeahead" id="to">
           </div>
 
           <label class="radio-inline">
-            <input type="radio" name="timeSet" id="avg" value="avg" checked> Avgår
+            <input type="radio" name="timeSet" id="avg" value="avg" checked> {% trans %}Avgår{% endtrans %}
           </label>
           <label class="radio-inline">
-            <input type="radio" name="timeSet" id="ank" value="ank"> Ankommer
+            <input type="radio" name="timeSet" id="ank" value="ank"> {% trans %}Ankommer{% endtrans %}
           </label>
 
           <div class="row">
@@ -36,7 +36,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-lg btn-block">Sök</button>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">{% trans %}Sök{% endtrans %}</button>
         </form>
         <div id="history"></div>
       </div>
