@@ -34,9 +34,6 @@ var loadHistory = function () {
         .exec()
         .then((rows) => {
             var view =  document.createElement('div');
-
-            console.log(rows);
-
             rows.forEach((r) => {
                 console.log(r);
                 var hRow = document.createElement('div');
@@ -103,7 +100,6 @@ var root = document.querySelector('#root');
 var spinner = document.createElement('div');
 var history = document.querySelector('#history');
 var resultView = null;
-//var resultListContainer = document.createElement('div');
 var currentForm = null;
 var prevDate = null, nextDate = null;
 spinner.innerHTML = '<div class="spinner"><div class="cube1"></div><div class="cube2"></div></div><div class="load-text">Väntar på SL..</div>';
@@ -130,13 +126,8 @@ var prevTrips = function (e) {
         prevDate = currentForm.day + " "+ currentForm.time;
     }
 
-    console.log(prevDate);
     var m = moment(prevDate,"YYYY-MM-DD HH:mm");
-    //console.log(m.format());
     m.subtract(120 , 'minutes');
-    //console.log(m.format());
-    //console.log(currentForm);
-
     prevDate = m.format('YYYY-MM-DD HH:mm');
 
     var args = {};
@@ -155,11 +146,10 @@ var nextTrips = function (e) {
         nextDate = currentForm.day + " "+ currentForm.time;
     }
 
-    console.log(nextDate);
     var m = moment(nextDate,"YYYY-MM-DD HH:mm");
     m.add(120 , 'minutes');
-
     nextDate = m.format('YYYY-MM-DD HH:mm');
+
     var args = {};
     objectAssign(args, currentForm);
     args.day = m.format('YYYY-MM-DD');
@@ -388,10 +378,9 @@ var renderResults = function(resp, appendTop, appendBottom) {
         resultList.appendChild(listItem);
 
         var listItemMap = document.createElement('div');
-        var mapId = 'map_'+Math.random().toString(36).substr(2, 5);
+        var mapId = 'map_'+Math.random().toString(36).substr(2, 7);
         listItemMap.id = mapId;
         listItemMap.className = 'trip-map';
-        //listItemMap.innerHTML = '<div id="'+mapId+'" class="trip-map"></div>';
 
         listItemBox.appendChild(listItemMap);
         listItemBox.appendChild(listItemButtons);
@@ -422,7 +411,7 @@ var renderResults = function(resp, appendTop, appendBottom) {
 };
 
 var renderMap = function (mapId, geoRefs) {
-    console.log(geoRefs);
+    //console.log(geoRefs);
     try {
         var map = L.map(mapId).setView([59.3282702,18.065956], 13);
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -457,11 +446,7 @@ var renderMap = function (mapId, geoRefs) {
                     map.fitBounds(bounds);
                 });
         });
-
-
-    } catch (e){
-
-    }
+    } catch (e){ }
 
 };
 
