@@ -413,13 +413,25 @@ var renderResults = function(resp, appendTop, appendBottom) {
 var renderMap = function (mapId, geoRefs) {
     //console.log(geoRefs);
     try {
-        var map = L.map(mapId).setView([59.3282702,18.065956], 13);
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-            maxZoom: 18,
-            id: 'atriix.nd49o5jk',
-            accessToken: 'pk.eyJ1IjoiYXRyaWl4IiwiYSI6IjdmNmY1MmUwZjY1ZDJmM2RlNDE0OGU3NmIyZDU2YWJmIn0.7rJekXMaz4HjJRNkgHF1nw'
+        L.mapbox.accessToken = 'pk.eyJ1IjoiYXRyaWl4IiwiYSI6IjdmNmY1MmUwZjY1ZDJmM2RlNDE0OGU3NmIyZDU2YWJmIn0.7rJekXMaz4HjJRNkgHF1nw';
+
+        var map = L.mapbox.map(mapId, 'atriix.nd49o5jk');
+
+        //var map = L.map(mapId).setView([59.3282702,18.065956], 13);
+        L.control.layers({
+            'Streets': L.mapbox.tileLayer('mapbox.mapbox-streets-v6').addTo(map),
+            'Satellite': L.mapbox.tileLayer('mapbox.satellite'),
+            //'Miao': L.mapbox.tileLayer('mapbox.mapbox-streets-v6')
+        }, {
+            'Bike Stations': L.mapbox.tileLayer('examples.bike-locations'),
+            'Bike Lanes': L.mapbox.tileLayer('examples.bike-lanes')
         }).addTo(map);
+        //L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        //    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        //    maxZoom: 18,
+        //    id: 'atriix.nd49o5jk',
+        //    accessToken: 'pk.eyJ1IjoiYXRyaWl4IiwiYSI6IjdmNmY1MmUwZjY1ZDJmM2RlNDE0OGU3NmIyZDU2YWJmIn0.7rJekXMaz4HjJRNkgHF1nw'
+        //}).addTo(map);
 
         var allPoints = [];
         geoRefs.forEach((ref) => {
@@ -492,3 +504,4 @@ from.on('typeahead:select', function (e, data) {
         sites.to = data;
     }
 });
+

@@ -104,8 +104,9 @@ gulp.task('copy', function () {
     gulp.src(['./bower_components/moment/min/moment-with-locales.min.js']).pipe(gulp.dest('./web/js'));
     gulp.src(['./node_modules/lovefield/dist/lovefield.min.js']).pipe(gulp.dest('./web/js'));
 
-    gulp.src(['./bower_components/leaflet/dist/leaflet.js']).pipe(gulp.dest('./web/leaflet'));
-    gulp.src(['./bower_components/leaflet/dist/leaflet.css']).pipe(gulp.dest('./web/leaflet'));
+    gulp.src(['./bower_components/mapbox.js/mapbox.js']).pipe(gulp.dest('./web/mapbox'));
+    gulp.src(['./bower_components/mapbox.js/mapbox.css']).pipe(gulp.dest('./web/mapbox'));
+    gulp.src(['./bower_components/mapbox.js/images/*']).pipe(gulp.dest('./web/mapbox/images'));
 });
 
 gulp.task('build', ['copy', 'pack:dist', 'sprite', 'sass']);
