@@ -239,6 +239,8 @@ var submitButtonAction = function (event) {
 
     queryTrip(formInput);
 
+    if (DB === undefined)
+        return;
     var h = DB.getSchema().table('History');
     console.log(h);
     DB.select()
