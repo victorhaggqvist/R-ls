@@ -51,6 +51,12 @@
   <script src="{{ asset('js/lovefield.min.js') }}"></script>
   <script async src="{{ asset('js/moment-with-locales.min.js') }}"></script>
   <script src="{{ asset('js/Rels.min.js') }}"></script>
+
+  {% if params %}
+    <script>
+      startFromUrl({{ params.to }}, '{{ params.toName }}', {{ params.from }}, '{{ params.fromName }}');
+    </script>
+  {% endif %}
 {% endblock %}
 
 {% block stylesheets %}

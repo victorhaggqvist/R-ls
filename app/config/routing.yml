@@ -1,12 +1,12 @@
-app:
-    resource: "@AppBundle/Controller/DefaultController.php"
+about:
+    resource: "@AppBundle/Controller/StaticController.php"
     type:     annotation
     prefix:   /{_locale}
     requirements:
         _locale: |sv|en
 
-about:
-    resource: "@AppBundle/Controller/StaticController.php"
+app:
+    resource: "@AppBundle/Controller/DefaultController.php"
     type:     annotation
     prefix:   /{_locale}
     requirements:
