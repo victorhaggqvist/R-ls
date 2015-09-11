@@ -189,6 +189,21 @@ var parseForm = function () {
 
 };
 
+window.startFromUrl = function (toId, toName, fromId, fromName) {
+    sites.to = {
+        SiteId: toId,
+        Name: toName
+    };
+    sites.from = {
+        SiteId: fromId,
+        Name: fromName
+    };
+    _to.value = toName;
+    _from.value = fromName;
+
+    submitButtonAction(null);
+};
+
 /**
  * Form submit action
  * @param event
@@ -212,6 +227,12 @@ var submitButtonAction = function (event) {
 
     var formInput = parseForm();
     currentForm = formInput;
+
+    var urlBits = [Translator.locale, sites.from.SiteId, sites.to.SiteId, encodeURIComponent(sites.from.Name), encodeURIComponent(sites.to.Name)];
+    var hist = urlBits.join('/');
+
+    window.history.pushState(null, 'Räls - '+sites.from.Name +' -> '+sites.to.Name, window.location.origin+'/'+hist);
+
 
     nextDate = null;
     prevDate = null;

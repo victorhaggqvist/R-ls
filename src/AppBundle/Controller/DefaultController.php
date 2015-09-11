@@ -2,67 +2,37 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\RealtidInput;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
+     * @Route("/", name="search")
+     * @Route("/{from}/{to}/{fromName}/{toName}", name="search_params")
      */
-    public function indexAction() {
+    public function indexAction(Request $request, $from = null, $to = null, $fromName = null, $toName = null) {
+        $locale = $request->getLocale();
+        if ($locale == 'sv')
+            setlocale(LC_ALL, 'sv_SE');
+
         $dates = array();
         for ($i = 1; $i < 14; $i++) {
             $time = strtotime('+'.$i.' day');
             $dates[] = array(
                 'time' => date('Y-m-d', $time),
-                'display' => date('l j F', $time)
+                'display' => utf8_encode(strftime('%A %e %B', $time))
             );
         }
-        $dates[0]['display'] = 'i dag';
-        $dates[1]['display'] = 'i imorgon ('.$dates[1]['display'].')';
-        $input = new RealtidInput();
-        $input->date = new \DateTime();
-        $input->time = new \DateTime();
-
-        $form = $this->createFormBuilder($input)
-//            ->add('lang','text')
-            ->add('date','date', array('widget' => 'single_text', 'format' => 'yyyy-MM-dd'))
-            ->add('time','time', array('widget' => 'single_text'))
-            ->add('searchForArrival','checkbox')
-            ->add('numChg','number')
-            ->add('minChgTime','number')
-            ->add('originId','text')
-//            ->add('originCoordLat','text')
-//            ->add('originCoordLong','text')
-//            ->add('originCoordName','text')
-            ->add('destId','text')
-//            ->add('destCoordLat','text')
-//            ->add('destCoordLong','text')
-//            ->add('destCoordName','text')
-            ->add('viaId','checkbox')
-            ->add('viaStopOver','text')
-//            ->add('unsharp','text')
-            ->add('searchFirstLastTrip','text')
-            ->add('maxWalkDist','number')
-            ->add('useTrain','text')
-            ->add('useMetro','text')
-            ->add('useTram','text')
-            ->add('useBus','text')
-            ->add('useFerry','text')
-            ->add('useShip','text')
-            ->add('lineInc','text')
-            ->add('lineExc','text')
-            ->add('numTrips','text')
-            ->add('save', 'submit', array('label' => 'Hunt Ride'))
-            ->getForm();
-
+        $t = $this->get('translator');
+        $dates[0]['display'] = $t->trans('i dag');
+        $dates[1]['display'] = $t->trans('i morgon').' ('.$dates[1]['display'].')';
 
         return $this->render('default/index.html.twig', array(
-//            'form' => $form->createView(),
             'date' => new \DateTime(),
-            'dates' => $dates
+            'dates' => $dates,
+            'params' => $from == null ? false : array('from' => $from, 'to' => $to, 'fromName' => $fromName, 'toName' => $toName)
         ));
     }
 }

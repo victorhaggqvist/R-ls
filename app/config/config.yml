@@ -108,6 +108,9 @@ snilius_sl:
 sonata_cache:
     caches:
        memcached:
-           prefix: test     # prefix to ensure there is no clash between instances
+           prefix: rels     # prefix to ensure there is no clash between instances
            servers:
                - {host: 127.0.0.1, port: 11211, weight: 0}
+
+bazinga_js_translation:
+    locale_fallback: "%locale%"
