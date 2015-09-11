@@ -1,6 +1,20 @@
 app:
-    resource: "@AppBundle/Controller/"
+    resource: "@AppBundle/Controller/DefaultController.php"
     type:     annotation
     prefix:   /{_locale}
     requirements:
         _locale: |sv|en
+
+about:
+    resource: "@AppBundle/Controller/StaticController.php"
+    type:     annotation
+    prefix:   /{_locale}
+    requirements:
+        _locale: |sv|en
+
+api:
+    resource: "@AppBundle/Controller/ApiController.php"
+    type:     annotation
+
+_bazinga_jstranslation:
+    resource: "@BazingaJsTranslationBundle/Resources/config/routing/routing.yml"

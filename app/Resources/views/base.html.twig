@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ app.request.locale|split('_')[0] }}">
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
@@ -42,6 +42,8 @@
         <script src="{{ asset('js/jquery.js') }}"></script>
         <script src="{{ asset('js/bootstrap.js') }}"></script>
 
+      <script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
+      <script src="{{ url('bazinga_jstranslation_js') }}?locales=en"></script>
         {% block javascripts %}{% endblock %}
     </body>
 </html>

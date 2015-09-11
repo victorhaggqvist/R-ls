@@ -113,10 +113,10 @@ var _from = document.querySelector('#from');
 var _to = document.querySelector('#to');
 
 var prevButton = document.createElement('button');
-prevButton.innerHTML = 'Tidigare';
+prevButton.innerHTML = Translator.trans('Tidigare');
 prevButton.className = 'btn btn-default btn-block';
 var nextButton = document.createElement('button');
-nextButton.innerHTML = 'Senare';
+nextButton.innerHTML = Translator.trans('Senare');
 nextButton.className = 'btn btn-default btn-block';
 
 var prevTrips = function (e) {
@@ -337,10 +337,10 @@ var renderResults = function(resp, appendTop, appendBottom) {
         var listItemButtons = document.createElement('div');
         var routeButton = document.createElement('button');
         routeButton.className = 'btn btn-default btn-detail';
-        routeButton.innerHTML = 'Resväg';
+        routeButton.innerHTML = Translator.trans('Resväg');
         var mapButton = document.createElement('button');
         mapButton.className = 'btn btn-default btn-detail';
-        mapButton.innerHTML = 'Karta';
+        mapButton.innerHTML = Translator.trans('Karta');
         listItemButtons.appendChild(routeButton);
         listItemButtons.appendChild(mapButton);
 

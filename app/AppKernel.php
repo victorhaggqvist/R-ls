@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
             new Snilius\Bundle\SLBundle\SniliusSLBundle(),
             new Sonata\CacheBundle\SonataCacheBundle(),
+            new Bazinga\Bundle\JsTranslationBundle\BazingaJsTranslationBundle(),
             new AppBundle\AppBundle(),
         );
 
