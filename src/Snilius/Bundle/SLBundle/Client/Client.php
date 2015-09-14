@@ -47,7 +47,7 @@ class Client {
      */
     private $slPlatsuppslagKey;
 
-    function __construct($slRealtidsinformation3Key, $slReseplanerare2key, $slPlatsuppslagKey) {
+    function __construct($slRealtidsinformation3Key, $slReseplanerare2key = null, $slPlatsuppslagKey = null) {
         $this->client = new \Guzzle\Http\Client();
         $this->slRealtidsinformation3Key = $slRealtidsinformation3Key;
         $this->slReseplanerare2key = $slReseplanerare2key;
