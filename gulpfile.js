@@ -107,6 +107,7 @@ gulp.task('copy', function () {
     gulp.src(['./bower_components/mapbox.js/mapbox.js']).pipe(gulp.dest('./web/mapbox'));
     gulp.src(['./bower_components/mapbox.js/mapbox.css']).pipe(gulp.dest('./web/mapbox'));
     gulp.src(['./bower_components/mapbox.js/images/*']).pipe(gulp.dest('./web/mapbox/images'));
+    gulp.src(['./img/*']).pipe(gulp.dest('./web/img'));
 });
 
 gulp.task('build', ['copy', 'pack:dist', 'sprite', 'sass']);

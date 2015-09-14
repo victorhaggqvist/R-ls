@@ -433,6 +433,28 @@ var renderResults = function(resp, appendTop, appendBottom) {
     }
 };
 
+var requestTripCords = function (refs) {
+  return new Promise((resolve, reject) => {
+      var cords = [];
+      var items = refs.length;
+      var done = 0;
+      while (refs.length > 0) {
+          var ref = refs.pop();
+          fetch('/api/geometry?ref=' + ref)
+              .then(res => res.json())
+              .then((res) => {
+                  var points = res.Geometry.Points.Point;
+                  cords.push(points);
+                  done++;
+
+                  if (done === items) {
+                      resolve(cords);
+                  }
+              });
+      }
+  });
+};
+
 var renderMap = function (mapId, geoRefs) {
     //console.log(geoRefs);
     try {
@@ -456,14 +478,29 @@ var renderMap = function (mapId, geoRefs) {
         //    accessToken: 'pk.eyJ1IjoiYXRyaWl4IiwiYSI6IjdmNmY1MmUwZjY1ZDJmM2RlNDE0OGU3NmIyZDU2YWJmIn0.7rJekXMaz4HjJRNkgHF1nw'
         //}).addTo(map);
 
-        var allPoints = [];
-        geoRefs.forEach((ref) => {
-            fetch('/api/geometry?ref=' + ref)
-                .then(res => res.json())
-                .then((res) => {
-                    var points = res.Geometry.Points.Point;
+        var greenIcon = L.icon({
+            iconUrl: '/img/marker-icon-green.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        });
+        var redIcon = L.icon({
+            iconUrl: '/img/marker-icon-red.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+        });
 
-                    var pointList = points.map((p) => {
+        var allPoints = [];
+        requestTripCords(geoRefs)
+        .then((cords) => {
+                cords.forEach((cordList) => {
+                    var startPoint;
+                    var endPoint;
+                    var pointList = cordList.map((p, index, src) => {
+                        if (index === 0) {
+                            startPoint = [p.lat, p.lon];
+                        } else if (index === src.length-1) {
+                            endPoint = [p.lat, p.lon];
+                        }
                         return new L.LatLng(p.lat, p.lon);
                     });
                     allPoints.push(pointList);
@@ -477,10 +514,15 @@ var renderMap = function (mapId, geoRefs) {
                     });
                     polyline.addTo(map);
 
+                    L.marker(startPoint, {icon: greenIcon}).addTo(map);
+                    L.marker(endPoint, {icon: redIcon}).addTo(map);
+
+
                     var bounds = new L.LatLngBounds(allPoints);
                     map.fitBounds(bounds);
                 });
-        });
+            });
+
     } catch (e){ }
 
 };
