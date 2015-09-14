@@ -90,4 +90,16 @@ class ApiController extends Controller {
         return new JsonResponse($geom);
     }
 
+    /**
+     * @Route("/api/journeydetail", name="api_journeydetail")
+     */
+    public function journeydetailAction(Request $request) {
+        $slClient = $this->get('snilius.sl.client');
+
+        $ref = $request->query->get('ref');
+        $detail = $slClient->slReseplanerare2JourneyDetail($ref);
+
+        return new JsonResponse($detail);
+    }
+
 }
