@@ -1,6 +1,6 @@
 # Räls
 
-A trip planer for SL. http://räls.snilius.com
+A trip planer for SL. [http://räls.snilius.com](http://räls.snilius.com)
 
 ## Requirements
 Memcache is required for caching of typeahead results. Also the Symfony setup will scream if there is no memcache.
