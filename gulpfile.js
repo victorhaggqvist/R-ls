@@ -10,7 +10,7 @@ var merge = require('merge-stream');
 var imagemin = require('gulp-imagemin');
 
 gulp.task('sass', function () {
-    return gulp.src('style/*.scss')
+    return gulp.src('style/style.scss')
         .pipe(sass({
             outputStyle: 'compressed',
             includePaths: [
