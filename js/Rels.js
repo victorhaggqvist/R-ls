@@ -114,10 +114,10 @@ var _to = document.querySelector('#to');
 
 var prevButton = document.createElement('button');
 prevButton.innerHTML = Translator.trans('Tidigare');
-prevButton.className = 'btn btn-default btn-block';
+prevButton.className = 'btn btn-default btn-block btn-link';
 var nextButton = document.createElement('button');
 nextButton.innerHTML = Translator.trans('Senare');
-nextButton.className = 'btn btn-default btn-block';
+nextButton.className = 'btn btn-default btn-block btn-link';
 
 var prevTrips = function (e) {
     e.preventDefault();
@@ -465,11 +465,7 @@ var renderMap = function (mapId, geoRefs) {
         //var map = L.map(mapId).setView([59.3282702,18.065956], 13);
         L.control.layers({
             'Streets': L.mapbox.tileLayer('mapbox.mapbox-streets-v6').addTo(map),
-            'Satellite': L.mapbox.tileLayer('mapbox.satellite'),
-            //'Miao': L.mapbox.tileLayer('mapbox.mapbox-streets-v6')
-        }, {
-            'Bike Stations': L.mapbox.tileLayer('examples.bike-locations'),
-            'Bike Lanes': L.mapbox.tileLayer('examples.bike-lanes')
+            'Satellite': L.mapbox.tileLayer('mapbox.satellite')
         }).addTo(map);
         //L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         //    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
