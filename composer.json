@@ -1,6 +1,6 @@
 {
     "name": "snilius/räls",
-    "license": "GPL-3",
+    "license": "GPL-3.0",
     "description": "An alternate tripplaner for SL",
     "type": "project",
     "autoload": {
