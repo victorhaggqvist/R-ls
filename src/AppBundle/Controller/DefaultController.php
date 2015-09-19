@@ -32,7 +32,7 @@ class DefaultController extends Controller
         return $this->render('default/index.html.twig', array(
             'date' => new \DateTime(),
             'dates' => $dates,
-            'params' => $from == null ? false : array('from' => $from, 'to' => $to, 'fromName' => $fromName, 'toName' => $toName)
+            'params' => $from === null ? false : array('from' => $from, 'to' => $to, 'fromName' => $fromName, 'toName' => $toName)
         ));
     }
 }
