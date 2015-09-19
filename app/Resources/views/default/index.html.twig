@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block gapage %}ga('send', 'pageview', {'page': '{{ app.request.requestUri }}','title': 'Search'});{% endblock %}
+
 {% block body %}
   <div class="container">
     <div class="row" id="root">
