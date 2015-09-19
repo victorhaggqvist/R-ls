@@ -1,6 +1,7 @@
 {
-    "name": "victor/rels",
-    "license": "proprietary",
+    "name": "snilius/räls",
+    "license": "GPL-3",
+    "description": "An alternate tripplaner for SL",
     "type": "project",
     "autoload": {
         "psr-4": {
